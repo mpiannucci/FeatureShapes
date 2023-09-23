@@ -9,12 +9,12 @@ import Foundation
 import GeoJSON
 
 public protocol Projection: Sendable {
-    func project(point: Point, in rect: CGRect) -> CGPoint
+    func project(position: Position, in rect: CGRect) -> CGPoint
 }
 
 public struct IdentityProjection : Projection {
-    public func project(point: GeoJSON.Point, in rect: CGRect) -> CGPoint {
-        return CGPoint(x: point.coordinates.longitude, y: point.coordinates.latitude)
+    public func project(position: GeoJSON.Position, in rect: CGRect) -> CGPoint {
+        return CGPoint(x: position.longitude, y: position.latitude)
     }
     
 }
