@@ -12,88 +12,10 @@ public struct FeatureShape: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         
-        switch feature.geometry {
-        case .point(let point):
-            let projected = projection.project(position: point.coordinates, in: rect)
-            path.move(to: projected)
-            path.addArc(center: projected, radius: 5.0, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
-        case .multiPoint(let points):
-            points.coordinates.forEach { position in
-                let projected = projection.project(position: position, in: rect)
-                path.move(to: projected)
-                path.addArc(center: projected, radius: 5.0, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
-            }
-        case .lineString(let line):
-            if let firstPoint = line.coordinates.first {
-                path.move(to: projection.project(position: firstPoint, in: rect))
-            }
-            
-            line.coordinates.forEach { pos in
-                path.addLine(to: projection.project(position: pos, in: rect))
-            }
-        case .multiLineString(let lines):
-            lines.coordinates.forEach { line in
-                if let firstPoint = line.coordinates.first {
-                    path.move(to: projection.project(position: firstPoint, in: rect))
-                }
-                
-                line.coordinates.forEach { pos in
-                    path.addLine(to: projection.project(position: pos, in: rect))
-                }
-            }
-        case .polygon(let polygon):
-            // First polygon ring is the exterior bounds
-            if let exterior = polygon.coordinates.first {
-                if let firstPoint = exterior.coordinates.first {
-                    path.move(to: projection.project(position: firstPoint, in: rect))
-                }
-                
-                exterior.coordinates.forEach { pos in
-                    path.addLine(to: projection.project(position: pos, in: rect))
-                }
-            }
-            
-            // The following rings are holes in the parent
-            polygon.coordinates.suffix(from: 1).forEach { interiorPolygon in
-                if let firstPoint = interiorPolygon.coordinates.first {
-                    path.move(to: projection.project(position: firstPoint, in: rect))
-                }
-                
-                interiorPolygon.coordinates.forEach { pos in
-                    // Reverse paths are used as clip paths, needs testing
-                    path.addLine(to: projection.project(position: pos, in: rect))
-                }
-            }
-        case .multiPolygon(let polygons):
-            polygons.coordinates.forEach { polygon in
-                // First polygon ring is the exterior bounds
-                if let exterior = polygon.coordinates.first {
-                    if let firstPoint = exterior.coordinates.first {
-                        path.move(to: projection.project(position: firstPoint, in: rect))
-                    }
-                    
-                    exterior.coordinates.forEach { pos in
-                        path.addLine(to: projection.project(position: pos, in: rect))
-                    }
-                }
-                
-                // The following rings are holes in the parent
-                polygon.coordinates.suffix(from: 1).forEach { interiorPolygon in
-                    if let firstPoint = interiorPolygon.coordinates.first {
-                        path.move(to: projection.project(position: firstPoint, in: rect))
-                    }
-                    
-                    interiorPolygon.coordinates.forEach { pos in
-                        // Reverse paths are used as clip paths, needs testing
-                        path.addLine(to: projection.project(position: pos, in: rect))
-                    }
-                }
-            }
-            break
-        default:
-            break
+        if let geometry = feature.geometry {
+            path.addPath(geometry.asPath(in: rect, projection: projection))
         }
-        
+
         return path
     }
 }
