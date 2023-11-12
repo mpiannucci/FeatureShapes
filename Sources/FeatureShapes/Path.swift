@@ -67,7 +67,7 @@ extension MultiLineString : ProjectToPath {
     }
 }
 
-extension Polygon : ProjectToPath {
+extension GeoJSON.Polygon : ProjectToPath {
     public func asPath(in rect: CGRect, projection: Projection) -> Path {
         var path = Path()
         
