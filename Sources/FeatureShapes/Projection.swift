@@ -13,6 +13,8 @@ public protocol Projection: Sendable {
 }
 
 public struct IdentityProjection : Projection {
+    public init() {}
+    
     public func project(position: GeoJSON.Position, in rect: CGRect) -> CGPoint {
         return CGPoint(x: position.longitude, y: position.latitude)
     }

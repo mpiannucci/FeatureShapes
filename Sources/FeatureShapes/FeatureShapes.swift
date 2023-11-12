@@ -9,6 +9,11 @@ public struct FeatureShape: Shape {
     public let feature: Feature
     public let projection: Projection
     
+    public init(feature: Feature, projection: Projection) {
+        self.feature = feature
+        self.projection = projection
+    }
+    
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         
