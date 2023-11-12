@@ -6,8 +6,8 @@ import SwiftUI
 
 
 public struct FeatureShape: Shape {
-    let feature: Feature
-    let projection: Projection
+    public let feature: Feature
+    public let projection: Projection
     
     public func path(in rect: CGRect) -> Path {
         var path = Path()
